@@ -33,6 +33,8 @@ def main():
                         help="Port range (ex: 1-1000)")
     parser.add_argument("--timeout", type=float, default=0.5,
                         help="Timeout per port in seconds")
+    parser.add_argument("-o", "--output",
+                        help="Save results to a file (ex: results.txt)")
     args = parser.parse_args()
 
     start, end = map(int, args.ports.split("-"))
@@ -49,11 +51,20 @@ def main():
     for t in threads:
         t.join()
 
+    lines = []
     for port, banner in sorted(open_ports):
         if banner:
-            print(f"[+] Port {port} open | {banner}")
+            lines.append(f"[+] Port {port} open | {banner}")
         else:
-            print(f"[+] Port {port} open")
+            lines.append(f"[+] Port {port} open")
+
+    for line in lines:
+        print(line)
+
+    if args.output:
+        with open(args.output, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines) + "\n")
+        print(f"\nResults saved to {args.output}")
 
 
 if __name__ == "__main__":
