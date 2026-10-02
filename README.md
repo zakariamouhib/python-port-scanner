@@ -10,6 +10,8 @@ Simple multithreaded TCP port scanner written in Python.
 - Multithreaded scanning (fast)
 - Custom port range
 - Adjustable timeout
+- Banner grabbing (detects the service on open ports)
+- Save results to a file
 - No external dependencies (standard library only)
 
 ## Requirements
@@ -21,6 +23,7 @@ Simple multithreaded TCP port scanner written in Python.
     python scanner.py -t 127.0.0.1
     python scanner.py -t 127.0.0.1 -p 1-1000
     python scanner.py -t 127.0.0.1 -p 1-65535 --timeout 1
+    python scanner.py -t 127.0.0.1 -p 1-1000 -o results.txt
 
 ## Options
 
@@ -29,19 +32,28 @@ Simple multithreaded TCP port scanner written in Python.
 | -t, --target | Target host (required) | - |
 | -p, --ports | Port range, ex: 1-1000 | 1-1024 |
 | --timeout | Timeout per port (seconds) | 0.5 |
+| -o, --output | Save results to a file | - |
+
+## Example output
+
+    [+] Port 80 open | HTTP/1.0 200 OK
+    [+] Port 135 open
+    [+] Port 445 open
 
 ## What I learned
 
 - TCP sockets in Python
 - Multithreading with threading
 - Building a CLI with argparse
+- Banner grabbing
 - Git and GitHub workflow
 
 ## Roadmap
 
-- [ ] Banner grabbing
-- [ ] Service detection
-- [ ] Save results to file
+- [x] Banner grabbing
+- [x] Save results to file
+- [ ] Service detection (beyond HTTP)
+- [ ] UDP scanning
 
 ## License
 
