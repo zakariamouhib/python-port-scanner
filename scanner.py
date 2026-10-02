@@ -2,13 +2,26 @@ import socket
 import threading
 import argparse
 
+
+def grab_banner(s):
+    try:
+        s.sendall(b"HEAD / HTTP/1.0\r\n\r\n")
+        data = s.recv(1024).decode(errors="ignore").strip()
+        return data.splitlines()[0] if data else ""
+    except Exception:
+        return ""
+
+
 def scan_port(host, port, open_ports, timeout):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.settimeout(timeout)
-    result = s.connect_ex((host, port))
-    s.close()
-    if result == 0:
-        open_ports.append(port)
+    try:
+        if s.connect_ex((host, port)) == 0:
+            banner = grab_banner(s)
+            open_ports.append((port, banner))
+    finally:
+        s.close()
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -36,8 +49,12 @@ def main():
     for t in threads:
         t.join()
 
-    for port in sorted(open_ports):
-        print(f"[+] Port {port} open")
+    for port, banner in sorted(open_ports):
+        if banner:
+            print(f"[+] Port {port} open | {banner}")
+        else:
+            print(f"[+] Port {port} open")
+
 
 if __name__ == "__main__":
     main()
